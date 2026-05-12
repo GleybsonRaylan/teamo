@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Play, Pause, SkipBack, SkipForward } from "lucide-react";
+import { Play, Pause } from "lucide-react";
 
-import album1 from "@/assets/album-1.jpg";
+import album1 from "../assets/album-1.jpg";
 
 interface Props {
   autoplay?: boolean;
@@ -10,7 +10,6 @@ interface Props {
 
 export function MusicPlayer({ autoplay = false }: Props) {
   const [playing, setPlaying] = useState(false);
-
   const [progress, setProgress] = useState(0);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -33,23 +32,19 @@ export function MusicPlayer({ autoplay = false }: Props) {
 
     const updateProgress = () => {
       const percentage = (audio.currentTime / audio.duration) * 100;
-
-      setProgress(isNaN(percentage) ? 0 : percentage);
+      setProgress(Number.isNaN(percentage) ? 0 : percentage);
     };
 
     const handleEnded = () => {
       setPlaying(false);
-
       setProgress(0);
     };
 
     audio.addEventListener("timeupdate", updateProgress);
-
     audio.addEventListener("ended", handleEnded);
 
     return () => {
       audio.removeEventListener("timeupdate", updateProgress);
-
       audio.removeEventListener("ended", handleEnded);
     };
   }, []);
@@ -60,11 +55,9 @@ export function MusicPlayer({ autoplay = false }: Props) {
     try {
       if (playing) {
         audioRef.current.pause();
-
         setPlaying(false);
       } else {
         await audioRef.current.play();
-
         setPlaying(true);
       }
     } catch (error) {
@@ -74,18 +67,10 @@ export function MusicPlayer({ autoplay = false }: Props) {
 
   return (
     <motion.div
-      initial={{
-        opacity: 0,
-        y: 20,
-      }}
-      animate={{
-        opacity: 1,
-        y: 0,
-      }}
-      transition={{
-        delay: 0.4,
-      }}
-      className="glass rounded-2xl p-4 shadow-soft w-full max-w-sm mx-auto"
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.35, duration: 0.7 }}
+      className="glass mx-auto w-full max-w-sm rounded-2xl p-4 shadow-soft"
     >
       <audio ref={audioRef} loop>
         <source src="/music/123.mp3" type="audio/mpeg" />
@@ -93,48 +78,40 @@ export function MusicPlayer({ autoplay = false }: Props) {
 
       <div className="flex items-center gap-4">
         <motion.div
-          animate={playing ? { rotate: 360 } : {}}
+          animate={playing ? { rotate: 360 } : { rotate: 0 }}
           transition={{
             duration: 12,
-            repeat: Infinity,
+            repeat: playing ? Infinity : 0,
             ease: "linear",
           }}
-          className="relative w-16 h-16 rounded-xl overflow-hidden shrink-0 shadow-glow"
+          className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl shadow-glow"
         >
-          <img src={album1} alt="album" className="w-full h-full object-cover" />
+          <img src={album1} alt="Capa do álbum" className="h-full w-full object-cover" />
         </motion.div>
 
-        <div className="flex-1 min-w-0">
-          <p className="text-blush text-sm font-medium truncate">Perfect</p>
+        <div className="min-w-0 flex-1 text-left">
+          <p className="truncate text-sm font-medium text-blush">Perfect</p>
 
-          <p className="text-muted-foreground text-xs truncate">Ed Sheeran</p>
+          <p className="truncate text-xs text-muted-foreground">Ed Sheeran</p>
 
-          <div className="mt-2 h-1 rounded-full bg-white/10 overflow-hidden">
+          <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/10">
             <motion.div
               className="h-full bg-gradient-to-r from-wine to-rose-glow"
-              style={{
-                width: `${progress}%`,
-              }}
+              style={{ width: `${progress}%` }}
             />
           </div>
         </div>
-      </div>
-
-      <div className="mt-4 flex items-center justify-center gap-6 text-blush">
-        <button className="opacity-60 hover:opacity-100 transition" aria-label="back">
-          <SkipBack size={18} />
-        </button>
 
         <button
           onClick={togglePlay}
-          className="w-12 h-12 rounded-full bg-gradient-to-br from-wine to-rose-glow flex items-center justify-center shadow-glow active:scale-95 transition"
-          aria-label={playing ? "pause" : "play"}
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-wine to-rose-glow shadow-glow transition active:scale-95"
+          aria-label={playing ? "Pausar música" : "Tocar música"}
         >
-          {playing ? <Pause size={20} /> : <Play size={20} className="ml-0.5" />}
-        </button>
-
-        <button className="opacity-60 hover:opacity-100 transition" aria-label="next">
-          <SkipForward size={18} />
+          {playing ? (
+            <Pause size={18} className="text-white" />
+          ) : (
+            <Play size={18} className="ml-0.5 text-white" />
+          )}
         </button>
       </div>
     </motion.div>

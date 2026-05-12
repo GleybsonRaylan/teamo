@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 import { Starfield } from "./Starfield";
 import { Particles } from "./Particles";
@@ -13,35 +13,33 @@ const greeting = "Happy Valentine's Day";
 
 export function EnvelopeIntro({ recipient, onComplete }: Props) {
   const [mounted, setMounted] = useState(false);
-
   const [stage, setStage] = useState<"closed" | "opening" | "revealed">("closed");
-
   const [typed, setTyped] = useState("");
-
   const [showCursor, setShowCursor] = useState(true);
 
-  // som da carta
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<number | null>(null);
+  const intervalRef = useRef<number | null>(null);
+  const audioStopTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     setMounted(true);
 
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+      if (timeoutRef.current !== null) {
+        window.clearTimeout(timeoutRef.current);
       }
 
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
+      if (intervalRef.current !== null) {
+        window.clearInterval(intervalRef.current);
+      }
+
+      if (audioStopTimeoutRef.current !== null) {
+        window.clearTimeout(audioStopTimeoutRef.current);
       }
     };
   }, []);
-
-  if (!mounted) return null;
 
   const open = () => {
     if (stage !== "closed") return;
@@ -50,78 +48,81 @@ export function EnvelopeIntro({ recipient, onComplete }: Props) {
 
     const cartaAudio = audioRef.current;
 
-    // toca som da carta
     if (cartaAudio) {
       cartaAudio.pause();
-
       cartaAudio.currentTime = 0;
+      cartaAudio.volume = 0.9;
 
-      cartaAudio.volume = 1;
+      cartaAudio.play().catch(() => {});
 
-      cartaAudio.play().catch((error) => {
-        console.error("Erro ao tocar áudio:", error);
-      });
-
-      // para após 2.3 segundos
-      setTimeout(() => {
+      audioStopTimeoutRef.current = window.setTimeout(() => {
         cartaAudio.pause();
-
         cartaAudio.currentTime = 0;
-
-        // inicia música principal
-        const bgMusic = document.querySelector(
-          "audio[src='/music/123.mp3']",
-        ) as HTMLAudioElement | null;
-
-        if (bgMusic) {
-          bgMusic.volume = 0.4;
-
-          bgMusic.play().catch(() => {});
-        }
       }, 2300);
     }
 
-    timeoutRef.current = setTimeout(() => {
+    timeoutRef.current = window.setTimeout(() => {
       setStage("revealed");
 
-      let i = 0;
+      let index = 0;
 
-      intervalRef.current = setInterval(() => {
-        i++;
+      intervalRef.current = window.setInterval(() => {
+        index += 1;
 
-        setTyped(greeting.slice(0, i));
+        setTyped(greeting.slice(0, index));
 
-        if (i >= greeting.length) {
-          if (intervalRef.current) {
-            clearInterval(intervalRef.current);
+        if (index >= greeting.length) {
+          if (intervalRef.current !== null) {
+            window.clearInterval(intervalRef.current);
           }
 
           setShowCursor(false);
 
-          timeoutRef.current = setTimeout(() => {
+          timeoutRef.current = window.setTimeout(() => {
             onComplete();
-          }, 5000);
+          }, 4200);
         }
-      }, 200);
-    }, 3000);
+      }, 120);
+    }, 2500);
   };
 
+  if (!mounted) return null;
+
   return (
-    <div className="fixed inset-0 z-50 bg-romance overflow-hidden flex items-center justify-center">
-      {/* som da carta */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-romance">
       <audio ref={audioRef} preload="auto">
         <source src="/music/carta1.mp3" type="audio/mpeg" />
       </audio>
 
-      <Starfield density={80} />
+      <Starfield density={100} />
+      <Particles count={24} />
 
-      <Particles count={20} />
+      <motion.div
+        className="absolute inset-0"
+        animate={{
+          backdropFilter: stage === "opening" ? "blur(10px)" : "blur(0px)",
+        }}
+        transition={{ duration: 1.3 }}
+      />
+
+      <motion.div
+        className="absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-rose-glow/20 blur-3xl"
+        animate={{
+          opacity: stage === "closed" ? [0.25, 0.5, 0.25] : [0.45, 0.8, 0.45],
+          scale: stage === "opening" ? [1, 1.18, 1.05] : [1, 1.08, 1],
+        }}
+        transition={{
+          duration: stage === "opening" ? 2.2 : 5,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      />
 
       <div
-        className="absolute inset-0 opacity-60"
+        className="absolute inset-0 opacity-70"
         style={{
           background:
-            "radial-gradient(circle at 50% 70%, oklch(0.4 0.16 18 / 0.35), transparent 60%)",
+            "radial-gradient(circle at 50% 68%, rgba(251,113,133,0.22), transparent 38%), radial-gradient(circle at 50% 35%, rgba(255,255,255,0.08), transparent 28%)",
         }}
       />
 
@@ -130,122 +131,184 @@ export function EnvelopeIntro({ recipient, onComplete }: Props) {
           <motion.div
             key="envelope"
             className="relative flex flex-col items-center px-6"
-            initial={{
-              opacity: 0,
-              y: 20,
-            }}
+            initial={{ opacity: 0, y: 24, scale: 0.96 }}
             animate={{
               opacity: 1,
               y: 0,
+              scale: stage === "opening" ? 1.04 : 1,
             }}
             exit={{
               opacity: 0,
-              scale: 0.9,
+              scale: 0.88,
+              y: -20,
+              filter: "blur(10px)",
             }}
             transition={{
-              duration: 1.2,
+              duration: 1.1,
               ease: [0.22, 1, 0.36, 1],
             }}
           >
             <motion.button
               onClick={open}
-              className="relative cursor-pointer focus:outline-none"
-              animate={{
-                y: [0, -10, 0],
-              }}
+              disabled={stage !== "closed"}
+              className="group relative cursor-pointer focus:outline-none disabled:cursor-default"
+              animate={stage === "closed" ? { y: [0, -10, 0] } : { y: 0 }}
               transition={{
                 duration: 4,
-                repeat: Infinity,
+                repeat: stage === "closed" ? Infinity : 0,
                 ease: "easeInOut",
               }}
               aria-label="Abrir carta"
             >
+              <motion.div
+                className="absolute -inset-10 rounded-full bg-rose-glow/10 blur-2xl"
+                animate={{
+                  opacity: stage === "closed" ? [0.25, 0.55, 0.25] : [0.55, 1, 0.55],
+                  scale: [1, 1.08, 1],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+
               <div
                 className="relative"
                 style={{
-                  perspective: "1200px",
-                  width: "min(80vw, 320px)",
-                  aspectRatio: "1.6/1",
+                  perspective: "1400px",
+                  width: "min(82vw, 340px)",
+                  aspectRatio: "1.58/1",
                 }}
               >
-                {/* corpo */}
-                <div
-                  className="absolute inset-0 rounded-md shadow-soft overflow-hidden"
+                <motion.div
+                  className="absolute inset-0 overflow-hidden rounded-lg shadow-soft"
                   style={{
-                    background: "linear-gradient(135deg, oklch(0.95 0.02 20), oklch(0.88 0.04 15))",
+                    background: "linear-gradient(135deg, #fff7f7 0%, #f6d7dc 45%, #e9aeb9 100%)",
                   }}
                 >
-                  {/* selo */}
+                  <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.7),transparent_45%,rgba(127,18,49,0.18))]" />
+
                   <motion.div
-                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full flex items-center justify-center text-blush text-xl shadow-glow"
+                    className="absolute left-1/2 top-1/2 z-30 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full text-xl text-blush shadow-glow"
                     style={{
-                      background:
-                        "radial-gradient(circle at 30% 30%, oklch(0.55 0.18 18), oklch(0.3 0.14 18))",
+                      background: "radial-gradient(circle at 30% 30%, #fb7185, #7f1231)",
                     }}
-                    animate={{
-                      scale: [1, 1.06, 1],
-                    }}
+                    animate={
+                      stage === "opening"
+                        ? {
+                            scale: [1, 1.35, 0],
+                            opacity: [1, 1, 0],
+                          }
+                        : {
+                            scale: [1, 1.07, 1],
+                          }
+                    }
                     transition={{
-                      duration: 2.5,
-                      repeat: Infinity,
+                      duration: stage === "opening" ? 1.2 : 2.5,
+                      repeat: stage === "closed" ? Infinity : 0,
+                      ease: "easeInOut",
                     }}
                   >
                     ❤
                   </motion.div>
-                </div>
+                </motion.div>
 
-                {/* aba */}
                 <motion.div
-                  className="absolute inset-x-0 top-0 origin-top z-20"
+                  className="absolute inset-x-0 top-0 z-20 origin-top"
                   style={{
-                    height: "55%",
+                    height: "56%",
                     transformStyle: "preserve-3d",
-                    background: "linear-gradient(180deg, oklch(0.92 0.03 18), oklch(0.82 0.05 15))",
+                    background: "linear-gradient(180deg, #fff1f4 0%, #f2bac5 100%)",
                     clipPath: "polygon(0 0, 100% 0, 50% 100%)",
                   }}
                   animate={
                     stage === "opening"
                       ? {
                           rotateX: -180,
+                          y: -2,
                         }
                       : {
                           rotateX: 0,
                         }
                   }
                   transition={{
-                    duration: 3,
+                    duration: 2.4,
                     ease: [0.22, 1, 0.36, 1],
                   }}
                 />
+
+                <motion.div
+                  className="absolute left-1/2 top-4 z-10 h-[95%] w-[90%] -translate-x-1/2 overflow-hidden rounded-lg border border-rose-glow/20 bg-[#fffaf8] shadow-soft"
+                  initial={{ y: 74, opacity: 0 }}
+                  animate={
+                    stage === "opening"
+                      ? {
+                          y: -42,
+                          opacity: 1,
+                          rotate: -1,
+                        }
+                      : {
+                          y: 74,
+                          opacity: 0,
+                        }
+                  }
+                  transition={{
+                    delay: 0.45,
+                    duration: 1.7,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                >
+                  <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.9),transparent_45%,rgba(127,18,49,0.03))]" />
+
+                  <div className="relative flex h-full flex-col items-center justify-center px-6 text-center">
+                    <motion.p
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={stage === "opening" ? { opacity: 1, y: 0 } : undefined}
+                      transition={{ delay: 1, duration: 0.8 }}
+                      className="font-display text-3xl leading-none text-[#7f1231]"
+                    >
+                      Para você
+                    </motion.p>
+
+                    <motion.p
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={stage === "opening" ? { opacity: 1, y: 0 } : undefined}
+                      transition={{ delay: 1.2, duration: 0.8 }}
+                      className="mt-3 max-w-[190px] text-[11px] uppercase leading-relaxed tracking-[0.18em] text-[#7f1231]/70"
+                    >
+                      com todo meu amor
+                    </motion.p>
+
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={stage === "opening" ? { opacity: 1, scale: 1 } : undefined}
+                      transition={{ delay: 1.45, duration: 0.7 }}
+                      className="mt-5 text-[26px] text-rose-glow drop-shadow-[0_0_12px_rgba(251,113,133,0.45)]"
+                    >
+                      ❤
+                    </motion.div>
+                  </div>
+                </motion.div>
               </div>
             </motion.button>
 
             <motion.p
-              className="mt-10 font-display text-2xl text-blush text-glow-soft"
-              initial={{
-                opacity: 0,
-              }}
-              animate={{
-                opacity: 1,
-              }}
-              transition={{
-                delay: 0.9,
-              }}
-            >
-              Para Meu Amor <span className="text-rose-glow">❤</span>
-            </motion.p>
+              className="mt-10 font-display text-3xl text-blush text-glow-soft"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 }}
+            ></motion.p>
 
             <motion.p
-              className="mt-3 text-sm text-muted-foreground tracking-widest uppercase"
-              initial={{
-                opacity: 0,
-              }}
+              className="mt-3 text-xs uppercase tracking-[0.35em] text-muted-foreground"
+              initial={{ opacity: 0 }}
               animate={{
                 opacity: stage === "closed" ? [0.4, 1, 0.4] : 0,
               }}
               transition={{
                 duration: 2.5,
-                repeat: Infinity,
+                repeat: stage === "closed" ? Infinity : 0,
               }}
             >
               Toque para abrir sua carta
@@ -254,31 +317,32 @@ export function EnvelopeIntro({ recipient, onComplete }: Props) {
         ) : (
           <motion.div
             key="reveal"
-            className="relative text-center px-6"
+            className="relative px-6 text-center"
             initial={{
               opacity: 0,
-              scale: 0.95,
+              scale: 0.92,
+              y: 20,
+              filter: "blur(10px)",
             }}
             animate={{
               opacity: 1,
               scale: 1,
+              y: 0,
+              filter: "blur(0px)",
             }}
-            exit={{
-              opacity: 0,
-            }}
+            exit={{ opacity: 0 }}
             transition={{
-              duration: 1.5,
+              duration: 1.4,
+              ease: [0.22, 1, 0.36, 1],
             }}
           >
-            <h1 className="font-display text-5xl md:text-7xl text-blush text-glow leading-tight">
+            <h1 className="font-display text-5xl leading-tight text-white drop-shadow-[0_0_30px_rgba(251,113,133,0.45)] md:text-7xl">
               {typed}
 
               {showCursor && (
                 <motion.span
-                  className="inline-block w-[3px] h-[1em] align-middle ml-1 bg-rose-glow"
-                  animate={{
-                    opacity: [1, 0, 1],
-                  }}
+                  className="ml-1 inline-block h-[1em] w-[3px] align-middle bg-rose-glow"
+                  animate={{ opacity: [1, 0, 1] }}
                   transition={{
                     duration: 0.9,
                     repeat: Infinity,
@@ -288,15 +352,23 @@ export function EnvelopeIntro({ recipient, onComplete }: Props) {
             </h1>
 
             <motion.p
-              className="mt-6 text-rose-glow text-2xl"
-              initial={{
-                opacity: 0,
-              }}
+              className="mt-6 font-display text-3xl text-rose-glow"
+              initial={{ opacity: 0, scale: 0.8 }}
               animate={{
                 opacity: 1,
+                scale: [1, 1.08, 1],
               }}
               transition={{
-                delay: 1.5,
+                opacity: {
+                  delay: 1.4,
+                  duration: 0.8,
+                },
+                scale: {
+                  delay: 1.4,
+                  duration: 2.2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                },
               }}
             >
               ❤

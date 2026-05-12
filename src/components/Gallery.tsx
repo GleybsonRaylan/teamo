@@ -5,11 +5,11 @@ import { useState } from "react";
 // IMPORTS SIMPLES DAS FOTOS
 // ═══════════════════════════════════════
 
-import foto1 from "@/assets/memory-1.jpg";
-import foto2 from "@/assets/memory-2.jpg";
-import foto3 from "@/assets/memory-3.jpg";
-import foto4 from "@/assets/memory-4.jpg";
-import fotoHero from "@/assets/hero-couple.png";
+import foto1 from "../assets/memory-1.jpg";
+import foto2 from "../assets/memory-2.jpg";
+import foto3 from "../assets/memory-3.jpg";
+import foto4 from "../assets/memory-4.jpg";
+import fotoHero from "../assets/hero-couple.png";
 
 // ═══════════════════════════════════════
 // ARRAY DE FOTOS (FÁCIL DE EDITAR)
