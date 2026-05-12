@@ -10,6 +10,10 @@ const lines = [
   "você já parecia destino.",
   "E em um mundo tão frio,",
   "você foi o único lugar que me fez sentir em casa.",
+  "Tu é o capítulo mais bonito que Deus escreveu na minha história.",
+  "Não é sobre perfeição, é sobre verdade.",
+  "É sobre construir juntos, tropeçar e recomeçar, rir e chorar, orar e acreditar.",
+  "Você é meu porto seguro, meu abraço de descanso, meu amanhã cheio de esperança.",
   "Para sempre seu.",
 ];
 
@@ -43,6 +47,7 @@ export function LoveLetter() {
 
     let line = 0;
     let char = 0;
+
     let timeout: number;
 
     const next = () => {
@@ -56,7 +61,9 @@ export function LoveLetter() {
 
       setShown((prev) => {
         const copy = [...prev];
+
         copy[line] = currentLine.slice(0, char);
+
         return copy;
       });
 
@@ -93,6 +100,7 @@ export function LoveLetter() {
         }}
         className="relative mx-auto max-w-md"
       >
+        {/* GLOW EXTERNO */}
         <div
           className="absolute -inset-1 rounded-[2rem] opacity-60"
           style={{
@@ -102,9 +110,12 @@ export function LoveLetter() {
           }}
         />
 
+        {/* CARD */}
         <div className="glass relative overflow-hidden rounded-[2rem] border border-white/10 p-6 shadow-soft sm:p-8">
+          {/* LINHA SUPERIOR */}
           <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-rose-glow/70 to-transparent" />
 
+          {/* GLOW FUNDO */}
           <div
             className="pointer-events-none absolute -right-14 -top-14 h-36 w-36 rounded-full bg-rose-glow/15 md:h-44 md:w-44"
             style={{
@@ -119,6 +130,7 @@ export function LoveLetter() {
             }}
           />
 
+          {/* HEADER */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -141,7 +153,8 @@ export function LoveLetter() {
             </div>
           </motion.div>
 
-          <div className="relative min-h-[390px] space-y-3 sm:min-h-[430px] sm:space-y-3.5">
+          {/* TEXTO */}
+          <div className="relative min-h-[650px] space-y-3 sm:min-h-[720px] sm:space-y-3.5">
             {lines.map((lineText, i) => {
               const isFirst = i === 0;
               const isLast = i === lines.length - 1;
@@ -170,6 +183,7 @@ export function LoveLetter() {
             })}
           </div>
 
+          {/* LINHA FINAL */}
           <motion.div
             initial={{ opacity: 0, scaleX: 0 }}
             animate={
@@ -179,6 +193,7 @@ export function LoveLetter() {
             className="mx-auto mt-6 h-px w-28 origin-center bg-gradient-to-r from-transparent via-rose-glow/60 to-transparent"
           />
 
+          {/* FOOTER */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={
