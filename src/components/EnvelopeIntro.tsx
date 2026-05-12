@@ -293,7 +293,9 @@ export function EnvelopeIntro({ recipient, onComplete }: Props) {
                       animate={stage === "opening" ? { opacity: 1, scale: 1 } : undefined}
                       transition={{ delay: 1.45, duration: 0.7 }}
                       className="mt-5 text-[26px] text-rose-glow drop-shadow-[0_0_10px_rgba(251,113,133,0.4)] md:drop-shadow-[0_0_12px_rgba(251,113,133,0.45)]"
-                    ></motion.div>
+                    >
+                      ❤
+                    </motion.div>
                   </div>
                 </motion.div>
               </div>
@@ -374,7 +376,9 @@ export function EnvelopeIntro({ recipient, onComplete }: Props) {
                   ease: "easeInOut",
                 },
               }}
-            ></motion.p>
+            >
+              ❤
+            </motion.p>
           </motion.div>
         )}
       </AnimatePresence>
