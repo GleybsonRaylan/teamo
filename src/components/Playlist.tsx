@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { X, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
 
 import memory1 from "../assets/memory-1.jpg";
@@ -129,20 +129,19 @@ const starImages = [memory1, memory2, memory3, memory4];
 
 function Particles() {
   const particles = useMemo(() => {
-    return Array.from({ length: 20 }, (_, i) => ({
+    return Array.from({ length: 10 }, (_, i) => ({
       id: i,
-      left: 5 + ((i * 5.3) % 90),
-      top: 5 + ((i * 7.1) % 90),
-      delay: (i * 0.7) % 5,
+      left: 8 + ((i * 9.3) % 84),
+      top: 8 + ((i * 11.1) % 84),
       size: 1.5 + (i % 3),
-      opacity: 0.15 + (i % 5) * 0.05,
+      opacity: 0.16 + (i % 4) * 0.04,
     }));
   }, []);
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
       {particles.map((p) => (
-        <motion.div
+        <div
           key={p.id}
           className="absolute rounded-full"
           style={{
@@ -150,17 +149,7 @@ function Particles() {
             top: `${p.top}%`,
             width: p.size,
             height: p.size,
-            background: `oklch(0.85 0.06 15 / ${p.opacity * 1.5})`,
-          }}
-          animate={{
-            opacity: [p.opacity, p.opacity * 0.5, p.opacity],
-            scale: [1, 1.5, 1],
-          }}
-          transition={{
-            duration: 3 + (p.id % 3),
-            repeat: Infinity,
-            delay: p.delay,
-            ease: "easeInOut",
+            background: `oklch(0.85 0.06 15 / ${p.opacity})`,
           }}
         />
       ))}
@@ -180,17 +169,16 @@ function Star({ memory, index, onClick, isVisible }: StarProps) {
 
   return (
     <motion.button
-      initial={{ opacity: 0, scale: 0 }}
-      animate={isVisible ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0 }}
+      initial={{ opacity: 0, scale: 0.6 }}
+      animate={isVisible ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.6 }}
       transition={{
-        duration: 0.8,
-        delay: index * 0.15,
+        duration: 0.45,
+        delay: index * 0.06,
         ease: "easeOut",
       }}
-      whileHover={{ scale: 1.15 }}
-      whileTap={{ scale: 0.95 }}
+      whileTap={{ scale: 0.94 }}
       onClick={() => onClick(memory)}
-      className="absolute z-10 cursor-pointer group"
+      className="absolute z-10 cursor-pointer"
       style={{
         left: `${memory.position.x}%`,
         top: `${memory.position.y}%`,
@@ -198,47 +186,21 @@ function Star({ memory, index, onClick, isVisible }: StarProps) {
       }}
       aria-label={`Memória: ${memory.title}`}
     >
-      <motion.div
-        className="relative"
-        animate={{
-          filter: [
-            "drop-shadow(0 0 6px oklch(0.65 0.2 18 / 0.4))",
-            "drop-shadow(0 0 12px oklch(0.65 0.2 18 / 0.6))",
-            "drop-shadow(0 0 6px oklch(0.65 0.2 18 / 0.4))",
-          ],
-        }}
-        transition={{
-          duration: 3,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: index * 0.2,
-        }}
-      >
-        <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border border-rose-glow/30 group-hover:border-rose-glow/60 transition-all duration-500">
+      <div className="relative">
+        <div className="relative h-10 w-10 overflow-hidden rounded-full border border-rose-glow/40 shadow-[0_0_14px_rgba(251,113,133,0.28)] md:h-12 md:w-12">
           <img
             src={starImageUrl}
             alt={`Estrela ${index + 1}`}
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
             loading="lazy"
+            decoding="async"
           />
 
-          <div className="absolute inset-0 bg-gradient-to-br from-rose-glow/20 to-transparent mix-blend-overlay" />
+          <div className="absolute inset-0 bg-gradient-to-br from-rose-glow/20 to-transparent" />
         </div>
 
-        <motion.div
-          className="absolute -inset-2 rounded-full bg-rose-glow/10 blur-xl"
-          animate={{
-            scale: [1, 1.4, 1],
-            opacity: [0.4, 0.2, 0.4],
-          }}
-          transition={{
-            duration: 2.5,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: index * 0.3,
-          }}
-        />
-      </motion.div>
+        <div className="absolute -inset-1 rounded-full bg-rose-glow/10 blur-md" />
+      </div>
     </motion.button>
   );
 }
@@ -255,39 +217,28 @@ function ConstellationLines({ memories, isVisible }: ConstellationLinesProps) {
       to: memories[i + 1].position,
       id: `line-${i}`,
     }));
-  }, [memories]);
+  }, []);
 
   return (
-    <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
-      <AnimatePresence>
-        {linePairs.map((pair, index) => (
-          <motion.line
-            key={pair.id}
-            x1={`${pair.from.x}%`}
-            y1={`${pair.from.y}%`}
-            x2={`${pair.to.x}%`}
-            y2={`${pair.to.y}%`}
-            stroke="url(#constellationGradient)"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={isVisible ? { pathLength: 1, opacity: 0.5 } : { pathLength: 0, opacity: 0 }}
-            transition={{
-              duration: 1.5,
-              delay: 0.8 + index * 0.2,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
-      </AnimatePresence>
-
-      <defs>
-        <linearGradient id="constellationGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="oklch(0.65 0.2 18 / 0.3)" />
-          <stop offset="50%" stopColor="oklch(0.65 0.2 18 / 0.5)" />
-          <stop offset="100%" stopColor="oklch(0.65 0.2 18 / 0.3)" />
-        </linearGradient>
-      </defs>
+    <svg className="pointer-events-none absolute inset-0 h-full w-full" style={{ zIndex: 1 }}>
+      {linePairs.map((pair, index) => (
+        <motion.line
+          key={pair.id}
+          x1={`${pair.from.x}%`}
+          y1={`${pair.from.y}%`}
+          x2={`${pair.to.x}%`}
+          y2={`${pair.to.y}%`}
+          stroke="oklch(0.65 0.2 18 / 0.38)"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+          initial={{ opacity: 0 }}
+          animate={isVisible ? { opacity: 0.5 } : { opacity: 0 }}
+          transition={{
+            duration: 0.5,
+            delay: 0.3 + index * 0.05,
+          }}
+        />
+      ))}
     </svg>
   );
 }
@@ -362,41 +313,42 @@ function MemoryModal({ memory, onClose }: MemoryModalProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
-      className="fixed inset-0 z-50 flex items-start justify-center p-3 pt-6 bg-background/80 backdrop-blur-sm overflow-y-auto"
+      transition={{ duration: 0.2 }}
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-background/90 p-3"
       onClick={onClose}
     >
       <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 30 }}
+        initial={{ opacity: 0, scale: 0.96, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.9, y: 30 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
+        exit={{ opacity: 0, scale: 0.96, y: 20 }}
+        transition={{ duration: 0.25, ease: "easeOut" }}
         onClick={(e) => e.stopPropagation()}
-        className="glass relative w-full max-w-lg rounded-3xl overflow-hidden shadow-soft my-auto"
+        className="glass relative my-auto w-full max-w-lg overflow-hidden rounded-3xl shadow-soft"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-20 p-2.5 rounded-full bg-background/70 backdrop-blur-sm border border-white/10 text-muted-foreground hover:text-foreground transition-colors"
+          className="absolute right-4 top-4 z-20 rounded-full border border-white/10 bg-background/80 p-2.5 text-muted-foreground transition-colors hover:text-foreground"
           aria-label="Fechar"
         >
           <X size={20} />
         </button>
 
-        <div className="relative w-full aspect-[4/5] bg-gradient-to-b from-wine/20 to-transparent overflow-hidden">
+        <div className="relative aspect-[4/5] w-full overflow-hidden bg-gradient-to-b from-wine/20 to-transparent">
           <AnimatePresence mode="wait">
             {currentMedia.type === "image" ? (
               <motion.img
                 key={currentMedia.src}
                 src={currentMedia.src}
                 alt={memory.title}
-                className="w-full h-full object-cover"
-                initial={{ opacity: 0, scale: 1.02 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.98 }}
-                transition={{ duration: 0.3 }}
-                loading="lazy"
+                className="h-full w-full object-cover"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                loading="eager"
+                decoding="async"
               />
             ) : (
               <motion.video
@@ -404,11 +356,12 @@ function MemoryModal({ memory, onClose }: MemoryModalProps) {
                 src={currentMedia.src}
                 controls
                 playsInline
-                className="w-full h-full object-cover bg-black"
-                initial={{ opacity: 0, scale: 1.02 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.98 }}
-                transition={{ duration: 0.3 }}
+                preload="metadata"
+                className="h-full w-full bg-black object-cover"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
               />
             )}
           </AnimatePresence>
@@ -418,7 +371,7 @@ function MemoryModal({ memory, onClose }: MemoryModalProps) {
               {currentMediaIndex > 0 && (
                 <button
                   onClick={goToPrevious}
-                  className="absolute left-3 top-1/2 z-20 -translate-y-1/2 p-3 rounded-full bg-background/60 backdrop-blur-sm text-white hover:bg-background/80 transition-colors"
+                  className="absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-background/70 p-3 text-white transition-colors hover:bg-background/90"
                   aria-label="Anterior"
                 >
                   <ChevronLeft size={22} />
@@ -428,22 +381,20 @@ function MemoryModal({ memory, onClose }: MemoryModalProps) {
               {currentMediaIndex < mediaItems.length - 1 && (
                 <button
                   onClick={goToNext}
-                  className="absolute right-3 top-1/2 z-20 -translate-y-1/2 p-3 rounded-full bg-background/60 backdrop-blur-sm text-white hover:bg-background/80 transition-colors"
+                  className="absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-background/70 p-3 text-white transition-colors hover:bg-background/90"
                   aria-label="Próximo"
                 >
                   <ChevronRight size={22} />
                 </button>
               )}
 
-              <div className="absolute bottom-4 left-1/2 z-20 -translate-x-1/2 flex gap-2">
+              <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-2">
                 {mediaItems.map((item, idx) => (
                   <button
                     key={`${item.type}-${idx}`}
                     onClick={() => setCurrentMediaIndex(idx)}
                     className={`h-2 rounded-full transition-all ${
-                      idx === currentMediaIndex
-                        ? "w-6 bg-rose-glow"
-                        : "w-2 bg-white/40 hover:bg-white/70"
+                      idx === currentMediaIndex ? "w-6 bg-rose-glow" : "w-2 bg-white/40"
                     }`}
                     aria-label={`Ir para ${item.type === "video" ? "vídeo" : "imagem"} ${idx + 1}`}
                   />
@@ -453,38 +404,19 @@ function MemoryModal({ memory, onClose }: MemoryModalProps) {
           )}
         </div>
 
-        <div className="p-6 space-y-4">
+        <div className="space-y-4 p-6">
           <div>
-            <motion.h3
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-2xl md:text-3xl font-display text-blush mb-1"
-            >
-              {memory.title}
-            </motion.h3>
+            <h3 className="mb-1 font-display text-2xl text-blush md:text-3xl">{memory.title}</h3>
 
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 }}
-              className="text-sm text-rose-glow/60 font-light tracking-wider"
-            >
-              {memory.date}
-            </motion.p>
+            <p className="text-sm font-light tracking-wider text-rose-glow/60">{memory.date}</p>
           </div>
 
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-base text-muted-foreground leading-relaxed font-light"
-          >
+          <p className="text-base font-light leading-relaxed text-muted-foreground">
             {memory.text}
-          </motion.p>
+          </p>
 
           {mediaItems.length > 1 && (
-            <p className="text-xs text-muted-foreground/40 text-center pt-2">
+            <p className="pt-2 text-center text-xs text-muted-foreground/40">
               ← deslize ou use as setas para ver mais →
             </p>
           )}
@@ -497,20 +429,11 @@ function MemoryModal({ memory, onClose }: MemoryModalProps) {
 export function Playlist() {
   const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
   const [allStarsVisible, setAllStarsVisible] = useState(false);
-  const sectionRef = useRef<HTMLElement | null>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
-
-  const opacity = useTransform(scrollYProgress, [0, 0.25], [0, 1]);
-  const scale = useTransform(scrollYProgress, [0, 0.25], [0.95, 1]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
       setAllStarsVisible(true);
-    }, 500);
+    }, 300);
 
     return () => window.clearTimeout(timer);
   }, []);
@@ -532,34 +455,34 @@ export function Playlist() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative py-24 px-6 overflow-hidden bg-romance">
+    <section className="relative overflow-hidden bg-romance px-6 py-24">
       <Particles />
 
-      <motion.div className="relative z-10 max-w-lg mx-auto" style={{ opacity, scale }}>
-        <div className="text-center mb-16">
+      <div className="relative z-10 mx-auto max-w-lg">
+        <div className="mb-16 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ duration: 0.65, ease: "easeOut" }}
           >
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Sparkles className="w-5 h-5 text-rose-glow/60" />
+            <div className="mb-4 flex items-center justify-center gap-2">
+              <Sparkles className="h-5 w-5 text-rose-glow/60" />
 
-              <span className="text-xs tracking-[0.5em] text-rose-glow/50 uppercase font-light font-sans">
+              <span className="font-sans text-xs font-light uppercase tracking-[0.5em] text-rose-glow/50">
                 Nossa História
               </span>
 
-              <Sparkles className="w-5 h-5 text-rose-glow/60" />
+              <Sparkles className="h-5 w-5 text-rose-glow/60" />
             </div>
 
-            <h2 className="font-display font-light text-4xl md:text-5xl text-glow-soft mb-4 leading-tight">
+            <h2 className="mb-4 font-display text-4xl font-light leading-tight text-glow-soft md:text-5xl">
               <span className="text-blush">Constelação do</span>
               <br />
-              <span className="text-rose-glow font-medium">Nosso Amor</span>
+              <span className="font-medium text-rose-glow">Nosso Amor</span>
             </h2>
 
-            <p className="text-sm text-muted-foreground font-light tracking-wide max-w-xs mx-auto">
+            <p className="mx-auto max-w-xs text-sm font-light tracking-wide text-muted-foreground">
               Cada estrela guarda um pedaço da nossa história. Toque nelas para reviver cada
               momento.
             </p>
@@ -580,30 +503,23 @@ export function Playlist() {
               />
             ))}
 
-            <motion.div
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full blur-3xl"
-              style={{ background: "oklch(0.65 0.2 18 / 0.08)" }}
-              animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.3, 0.5, 0.3],
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: "easeInOut",
+            <div
+              className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full blur-xl"
+              style={{
+                background: "oklch(0.65 0.2 18 / 0.08)",
               }}
             />
           </div>
         </div>
 
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 1, ease: "easeOut" }}
-          className="text-center mt-20"
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+          className="mt-20 text-center"
         >
-          <p className="relative text-xl md:text-2xl font-display font-light text-blush/80 leading-relaxed px-4 text-glow-soft">
+          <p className="relative px-4 font-display text-xl font-light leading-relaxed text-blush/80 text-glow-soft md:text-2xl">
             Em qualquer universo,
             <br />
             <span className="font-medium text-rose-glow">eu encontraria você.</span>
@@ -613,15 +529,15 @@ export function Playlist() {
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="w-16 h-px mx-auto mt-6"
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="mx-auto mt-6 h-px w-16"
             style={{
               background:
                 "linear-gradient(90deg, transparent, oklch(0.65 0.2 18 / 0.4), transparent)",
             }}
           />
         </motion.div>
-      </motion.div>
+      </div>
 
       <AnimatePresence>
         {selectedMemory && <MemoryModal memory={selectedMemory} onClose={handleCloseModal} />}
