@@ -16,6 +16,7 @@ export function EnvelopeIntro({ recipient, onComplete }: Props) {
   const [stage, setStage] = useState<"closed" | "opening" | "revealed">("closed");
   const [typed, setTyped] = useState("");
   const [showCursor, setShowCursor] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -26,7 +27,16 @@ export function EnvelopeIntro({ recipient, onComplete }: Props) {
   useEffect(() => {
     setMounted(true);
 
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
     return () => {
+      window.removeEventListener("resize", checkMobile);
+
       if (timeoutRef.current !== null) {
         window.clearTimeout(timeoutRef.current);
       }
@@ -68,7 +78,6 @@ export function EnvelopeIntro({ recipient, onComplete }: Props) {
 
       intervalRef.current = window.setInterval(() => {
         index += 1;
-
         setTyped(greeting.slice(0, index));
 
         if (index >= greeting.length) {
@@ -94,22 +103,22 @@ export function EnvelopeIntro({ recipient, onComplete }: Props) {
         <source src="/music/carta1.mp3" type="audio/mpeg" />
       </audio>
 
-      <Starfield density={100} />
-      <Particles count={24} />
+      <Starfield density={isMobile ? 45 : 100} />
+      <Particles count={isMobile ? 12 : 24} />
 
       <motion.div
-        className="absolute inset-0"
+        className="absolute inset-0 bg-black/10"
         animate={{
-          backdropFilter: stage === "opening" ? "blur(10px)" : "blur(0px)",
+          opacity: stage === "opening" ? 1 : 0,
         }}
         transition={{ duration: 1.3 }}
       />
 
       <motion.div
-        className="absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-rose-glow/20 blur-3xl"
+        className="absolute left-1/2 top-1/2 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-rose-glow/20 blur-2xl md:h-[420px] md:w-[420px] md:blur-3xl"
         animate={{
           opacity: stage === "closed" ? [0.25, 0.5, 0.25] : [0.45, 0.8, 0.45],
-          scale: stage === "opening" ? [1, 1.18, 1.05] : [1, 1.08, 1],
+          scale: stage === "opening" ? [1, 1.14, 1.05] : [1, 1.06, 1],
         }}
         transition={{
           duration: stage === "opening" ? 2.2 : 5,
@@ -135,13 +144,12 @@ export function EnvelopeIntro({ recipient, onComplete }: Props) {
             animate={{
               opacity: 1,
               y: 0,
-              scale: stage === "opening" ? 1.04 : 1,
+              scale: stage === "opening" ? 1.03 : 1,
             }}
             exit={{
               opacity: 0,
-              scale: 0.88,
+              scale: 0.9,
               y: -20,
-              filter: "blur(10px)",
             }}
             transition={{
               duration: 1.1,
@@ -161,7 +169,7 @@ export function EnvelopeIntro({ recipient, onComplete }: Props) {
               aria-label="Abrir carta"
             >
               <motion.div
-                className="absolute -inset-10 rounded-full bg-rose-glow/10 blur-2xl"
+                className="absolute -inset-8 rounded-full bg-rose-glow/10 blur-xl md:-inset-10 md:blur-2xl"
                 animate={{
                   opacity: stage === "closed" ? [0.25, 0.55, 0.25] : [0.55, 1, 0.55],
                   scale: [1, 1.08, 1],
@@ -284,10 +292,8 @@ export function EnvelopeIntro({ recipient, onComplete }: Props) {
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={stage === "opening" ? { opacity: 1, scale: 1 } : undefined}
                       transition={{ delay: 1.45, duration: 0.7 }}
-                      className="mt-5 text-[26px] text-rose-glow drop-shadow-[0_0_12px_rgba(251,113,133,0.45)]"
-                    >
-                      ❤
-                    </motion.div>
+                      className="mt-5 text-[26px] text-rose-glow drop-shadow-[0_0_10px_rgba(251,113,133,0.4)] md:drop-shadow-[0_0_12px_rgba(251,113,133,0.45)]"
+                    ></motion.div>
                   </div>
                 </motion.div>
               </div>
@@ -322,13 +328,11 @@ export function EnvelopeIntro({ recipient, onComplete }: Props) {
               opacity: 0,
               scale: 0.92,
               y: 20,
-              filter: "blur(10px)",
             }}
             animate={{
               opacity: 1,
               scale: 1,
               y: 0,
-              filter: "blur(0px)",
             }}
             exit={{ opacity: 0 }}
             transition={{
@@ -336,7 +340,7 @@ export function EnvelopeIntro({ recipient, onComplete }: Props) {
               ease: [0.22, 1, 0.36, 1],
             }}
           >
-            <h1 className="font-display text-5xl leading-tight text-white drop-shadow-[0_0_30px_rgba(251,113,133,0.45)] md:text-7xl">
+            <h1 className="font-display text-5xl leading-tight text-white drop-shadow-[0_0_18px_rgba(251,113,133,0.38)] md:text-7xl md:drop-shadow-[0_0_30px_rgba(251,113,133,0.45)]">
               {typed}
 
               {showCursor && (
@@ -370,9 +374,7 @@ export function EnvelopeIntro({ recipient, onComplete }: Props) {
                   ease: "easeInOut",
                 },
               }}
-            >
-              ❤
-            </motion.p>
+            ></motion.p>
           </motion.div>
         )}
       </AnimatePresence>

@@ -11,13 +11,13 @@ interface Props {
 
 export function Hero({ musicAutoplay }: Props) {
   return (
-    <section className="relative min-h-[100svh] flex items-end justify-center overflow-hidden bg-background">
+    <section className="relative flex min-h-[100svh] items-end justify-center overflow-hidden bg-background">
       {/* BACKGROUND */}
       <motion.div
-        initial={{ scale: 1.12 }}
+        initial={{ scale: 1.06 }}
         animate={{ scale: 1 }}
         transition={{
-          duration: 5,
+          duration: 4,
           ease: [0.22, 1, 0.36, 1],
         }}
         className="absolute inset-0"
@@ -25,9 +25,11 @@ export function Hero({ musicAutoplay }: Props) {
         <img
           src={heroImg}
           alt="Casal romântico"
-          className="w-full h-full object-cover object-center"
+          className="h-full w-full object-cover object-center"
           width={1024}
           height={1536}
+          loading="eager"
+          decoding="async"
         />
 
         {/* DARK OVERLAY */}
@@ -39,23 +41,23 @@ export function Hero({ musicAutoplay }: Props) {
         {/* LOWER DARK AREA */}
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/90 to-transparent" />
 
-        {/* TEXT AREA */}
-        <div className="absolute inset-x-0 bottom-0 h-[65%] bg-gradient-to-t from-background via-background/90 to-transparent backdrop-blur-[3px]" />
+        {/* TEXT AREA - blur mais leve no mobile */}
+        <div className="absolute inset-x-0 bottom-0 h-[65%] bg-gradient-to-t from-background via-background/90 to-transparent md:backdrop-blur-[3px]" />
 
         {/* VIGNETTE */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_5%,rgba(8,3,5,0.65)_48%,rgba(8,3,5,0.98)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_8%,rgba(8,3,5,0.58)_52%,rgba(8,3,5,0.96)_100%)]" />
       </motion.div>
 
-      {/* GLOW */}
+      {/* GLOW - mais leve no mobile */}
       <motion.div
         initial={{ opacity: 0 }}
-        animate={{ opacity: [0.25, 0.45, 0.25] }}
+        animate={{ opacity: [0.22, 0.38, 0.22] }}
         transition={{
           duration: 6,
           repeat: Infinity,
           ease: "easeInOut",
         }}
-        className="absolute top-24 left-1/2 h-56 w-56 -translate-x-1/2 rounded-full bg-rose-glow/20 blur-3xl"
+        className="absolute left-1/2 top-24 h-40 w-40 -translate-x-1/2 rounded-full bg-rose-glow/20 blur-2xl md:h-56 md:w-56 md:blur-3xl"
       />
 
       {/* CONTENT */}
@@ -64,8 +66,8 @@ export function Hero({ musicAutoplay }: Props) {
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.45, duration: 0.9 }}
-          className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/20 px-4 py-2 backdrop-blur-md"
+          transition={{ delay: 0.45, duration: 0.8 }}
+          className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/20 px-4 py-2 backdrop-blur-sm md:backdrop-blur-md"
         >
           <Heart size={14} className="text-rose-glow" />
 
@@ -76,18 +78,18 @@ export function Hero({ musicAutoplay }: Props) {
 
         {/* TITLE */}
         <motion.h1
-          initial={{ opacity: 0, y: 28 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{
             delay: 0.75,
-            duration: 1.15,
+            duration: 1,
             ease: [0.22, 1, 0.36, 1],
           }}
-          className="mx-auto max-w-3xl font-display text-[3rem] leading-[0.92] text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.85)] sm:text-6xl md:text-7xl"
+          className="mx-auto max-w-3xl font-display text-[3rem] leading-[0.92] text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.75)] sm:text-6xl md:text-7xl md:drop-shadow-[0_4px_30px_rgba(0,0,0,0.85)]"
         >
           Eu vejo meu futuro
           <br />
-          <span className="text-[#ffd6de] drop-shadow-[0_2px_20px_rgba(0,0,0,0.9)]">
+          <span className="text-[#ffd6de] drop-shadow-[0_2px_14px_rgba(0,0,0,0.75)] md:drop-shadow-[0_2px_20px_rgba(0,0,0,0.9)]">
             em seus olhos
           </span>
         </motion.h1>
@@ -96,16 +98,16 @@ export function Hero({ musicAutoplay }: Props) {
         <motion.div
           initial={{ scaleX: 0, opacity: 0 }}
           animate={{ scaleX: 1, opacity: 1 }}
-          transition={{ delay: 1.05, duration: 0.9 }}
+          transition={{ delay: 1.05, duration: 0.8 }}
           className="mx-auto mt-6 h-px w-24 origin-center bg-gradient-to-r from-transparent via-rose-glow/70 to-transparent"
         />
 
         {/* DESCRIPTION */}
         <motion.p
-          initial={{ opacity: 0, y: 18 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.25, duration: 1 }}
-          className="mx-auto mt-6 max-w-md text-sm leading-relaxed text-white/80 drop-shadow-[0_2px_15px_rgba(0,0,0,0.9)] sm:text-base"
+          transition={{ delay: 1.25, duration: 0.9 }}
+          className="mx-auto mt-6 max-w-md text-sm leading-relaxed text-white/80 drop-shadow-[0_2px_10px_rgba(0,0,0,0.75)] sm:text-base md:drop-shadow-[0_2px_15px_rgba(0,0,0,0.9)]"
         >
           Eu encontrei uma mulher mais forte do que qualquer pessoa que conheço — e, ao lado dela,
           até o silêncio parece amor.
@@ -113,9 +115,9 @@ export function Hero({ musicAutoplay }: Props) {
 
         {/* PLAYER */}
         <motion.div
-          initial={{ opacity: 0, y: 22, scale: 0.96 }}
+          initial={{ opacity: 0, y: 18, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ delay: 1.55, duration: 0.9 }}
+          transition={{ delay: 1.5, duration: 0.8 }}
           className="mx-auto mt-8 max-w-sm"
         >
           <MusicPlayer autoplay={musicAutoplay} />
@@ -127,12 +129,12 @@ export function Hero({ musicAutoplay }: Props) {
           initial={{ opacity: 0 }}
           animate={{
             opacity: 1,
-            y: [0, 8, 0],
+            y: [0, 7, 0],
           }}
           transition={{
             opacity: {
-              delay: 1.9,
-              duration: 1,
+              delay: 1.85,
+              duration: 0.9,
             },
             y: {
               duration: 2.4,
