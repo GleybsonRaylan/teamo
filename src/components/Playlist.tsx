@@ -2,17 +2,26 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
 
-import memory1 from "../assets/memory-1.jpg";
-import memory2 from "../assets/memory-2.jpg";
-import memory3 from "../assets/memory-3.jpg";
-import memory4 from "../assets/memory-4.jpg";
+import memory1 from "../assets/estrela.png";
+import memory2 from "../assets/estrela.png";
+import memory3 from "../assets/estrela.png";
+import memory4 from "../assets/estrela.png";
 
 import shop from "../assets/shop.jpg";
 import shop2 from "../assets/shop2.jpg";
 import foto1 from "../assets/1.jpg";
-import cachoeira from "../assets/cachoeria.jpg";
-import cachoeira2 from "../assets/cachoeira2.jpg";
+import ca from "../assets/ca.jpg";
+import ca2 from "../assets/ca2.jpg";
 import video1 from "../assets/video1.mp4";
+import colacao from "../assets/colacao.jpg";
+import colacao2 from "../assets/colacao2.jpg";
+import pizza from "../assets/pizza.jpg";
+import pizza2 from "../assets/pizza2.jpg";
+import pis from "../assets/pis.jpg";
+import pis2 from "../assets/pis2.jpg";
+import pis3 from "../assets/pis3.jpg";
+import praia from "../assets/praia.jpg";
+import romaria from "../assets/romaria.jpg";
 
 type Memory = {
   id: number;
@@ -63,7 +72,7 @@ const memories: Memory[] = [
     date: "Dom, 4 de Fevereiro de 2024",
     text: "Descobrimos que juntos qualquer lugar se torna especial.",
     image: memory3,
-    gallery: [cachoeira, cachoeira2],
+    gallery: [ca, ca2],
     audio: null,
     video: video1,
     position: { x: 40, y: 45 },
@@ -71,54 +80,54 @@ const memories: Memory[] = [
   {
     id: 4,
     title: "Nosso Lugar Favorito",
-    date: "5 de Julho de 2023",
+    date: "Sáb 18 de Janeiro de 2025",
     text: "Aquele lugar sempre vai carregar um pedaço da gente. Nossas risadas ainda ecoam por lá.",
     image: memory4,
-    gallery: [],
+    gallery: [pizza, pizza2],
     audio: null,
     video: null,
     position: { x: 75, y: 55 },
   },
   {
     id: 5,
-    title: "O Pedido",
-    date: "14 de Fevereiro de 2024",
-    text: "O dia em que o 'eu' se tornou 'nós' oficialmente. As estrelas foram testemunhas do nosso amor.",
+    title: "Colação",
+    date: "27 de Agosto 2024",
+    text: "So consigo lembrar o quanto voce tava linda",
     image: memory1,
-    gallery: [memory1, memory2],
+    gallery: [colacao, colacao2],
     audio: null,
     video: null,
     position: { x: 15, y: 60 },
   },
   {
     id: 6,
-    title: "Nossa Primeira Dança",
-    date: "14 de Fevereiro de 2024",
-    text: "Dançamos como se ninguém estivesse vendo. Na verdade, só existia nós dois no universo.",
+    title: "Dia de Piscina",
+    date: "Dom 4 de Janeiro de 2026",
+    text: "Ao seu lado qualquer lugar vira especial",
     image: memory2,
-    gallery: [],
+    gallery: [pis, pis2, pis3],
     audio: null,
     video: null,
     position: { x: 50, y: 70 },
   },
   {
     id: 7,
-    title: "Dia de Chuva",
-    date: "3 de Março de 2024",
-    text: "Ficamos horas debaixo da coberta, ouvindo a chuva e compartilhando sonhos.",
+    title: "",
+    date: "",
+    text: "",
     image: memory3,
-    gallery: [],
+    gallery: [romaria],
     audio: null,
     video: null,
     position: { x: 85, y: 75 },
   },
   {
     id: 8,
-    title: "Nosso Filme Favorito",
-    date: "20 de Abril de 2024",
-    text: "Assistimos tantas vezes que já sabemos as falas de cor. Mas sempre choramos na mesma cena.",
+    title: "",
+    date: "",
+    text: "",
     image: memory4,
-    gallery: [memory4],
+    gallery: [praia],
     audio: null,
     video: null,
     position: { x: 30, y: 80 },
@@ -477,7 +486,7 @@ export function Playlist() {
             </div>
 
             <h2 className="mb-4 font-display text-4xl font-light leading-tight text-glow-soft md:text-5xl">
-              <span className="text-blush">Constelação do</span>
+              <span className="text-blush">Constelação</span>
               <br />
               <span className="font-medium text-rose-glow">Nosso Amor</span>
             </h2>
