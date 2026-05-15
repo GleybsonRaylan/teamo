@@ -2,6 +2,8 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { EnvelopeIntro } from "./components/EnvelopeIntro";
+import { VoiceMessageIntro } from "./components/VoiceMessageIntro";
+
 import { Hero } from "./components/Hero";
 import { Timeline } from "./components/Timeline";
 import { Counter } from "./components/Counter";
@@ -11,31 +13,61 @@ import { Playlist } from "./components/Playlist";
 import { Final } from "./components/Final";
 
 function App() {
-  const [opened, setOpened] = useState(false);
+  const [step, setStep] = useState<"envelope" | "voice" | "site">("envelope");
 
   return (
     <main className="relative bg-background text-foreground">
-      <AnimatePresence>
-        {!opened && (
-          <motion.div key="intro" exit={{ opacity: 0, scale: 1.05 }} transition={{ duration: 1 }}>
-            <EnvelopeIntro recipient="My Love" onComplete={() => setOpened(true)} />
+      <AnimatePresence mode="wait">
+        {/* CARTA */}
+        {step === "envelope" && (
+          <motion.div
+            key="intro"
+            exit={{
+              opacity: 0,
+              scale: 1.05,
+            }}
+            transition={{
+              duration: 1,
+            }}
+          >
+            <EnvelopeIntro recipient="My Love" onComplete={() => setStep("voice")} />
+          </motion.div>
+        )}
+
+        {/* RECADO DE VOZ */}
+        {step === "voice" && (
+          <motion.div
+            key="voice"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1 }}
+          >
+            <VoiceMessageIntro onComplete={() => setStep("site")} />
           </motion.div>
         )}
       </AnimatePresence>
 
-      {opened && (
+      {/* SITE */}
+      {step === "site" && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1.2 }}
         >
           <Hero musicAutoplay />
+
           <Timeline />
+
           <Counter />
+
           <Gallery />
+
           <LoveLetter />
+
           <Playlist />
-          <Final onReplay={() => setOpened(false)} />
+
+          <Final onReplay={() => setStep("envelope")} />
         </motion.div>
       )}
     </main>

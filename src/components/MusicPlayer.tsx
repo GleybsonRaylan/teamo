@@ -15,13 +15,20 @@ export function MusicPlayer({ autoplay = false }: Props) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    if (autoplay && audioRef.current) {
-      audioRef.current.volume = 0.4;
+    const audio = audioRef.current;
 
-      audioRef.current
+    if (!audio) return;
+
+    audio.volume = 0.4;
+    audio.loop = true;
+
+    if (autoplay) {
+      audio
         .play()
         .then(() => setPlaying(true))
-        .catch(() => {});
+        .catch(() => {
+          setPlaying(false);
+        });
     }
   }, [autoplay]);
 
@@ -31,34 +38,55 @@ export function MusicPlayer({ autoplay = false }: Props) {
     if (!audio) return;
 
     const updateProgress = () => {
+      if (!audio.duration) {
+        setProgress(0);
+        return;
+      }
+
       const percentage = (audio.currentTime / audio.duration) * 100;
       setProgress(Number.isNaN(percentage) ? 0 : percentage);
     };
 
-    const handleEnded = () => {
+    const handlePlay = () => {
+      setPlaying(true);
+    };
+
+    const handlePause = () => {
       setPlaying(false);
+    };
+
+    const handleEnded = () => {
+      audio.currentTime = 0;
+      audio.play().catch(() => {});
       setProgress(0);
+      setPlaying(true);
     };
 
     audio.addEventListener("timeupdate", updateProgress);
+    audio.addEventListener("play", handlePlay);
+    audio.addEventListener("pause", handlePause);
     audio.addEventListener("ended", handleEnded);
 
     return () => {
       audio.removeEventListener("timeupdate", updateProgress);
+      audio.removeEventListener("play", handlePlay);
+      audio.removeEventListener("pause", handlePause);
       audio.removeEventListener("ended", handleEnded);
     };
   }, []);
 
   const togglePlay = async () => {
-    if (!audioRef.current) return;
+    const audio = audioRef.current;
+
+    if (!audio) return;
 
     try {
-      if (playing) {
-        audioRef.current.pause();
-        setPlaying(false);
-      } else {
-        await audioRef.current.play();
+      if (audio.paused) {
+        await audio.play();
         setPlaying(true);
+      } else {
+        audio.pause();
+        setPlaying(false);
       }
     } catch (error) {
       console.error("Erro ao tocar áudio:", error);
@@ -72,7 +100,7 @@ export function MusicPlayer({ autoplay = false }: Props) {
       transition={{ delay: 0.35, duration: 0.7 }}
       className="glass mx-auto w-full max-w-sm rounded-2xl p-4 shadow-soft"
     >
-      <audio ref={audioRef} loop>
+      <audio ref={audioRef} preload="auto" loop>
         <source src="/music/123.mp3" type="audio/mpeg" />
       </audio>
 

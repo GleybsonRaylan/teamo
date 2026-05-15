@@ -2,10 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
 
-import memory1 from "../assets/estrela.png";
-import memory2 from "../assets/estrela.png";
-import memory3 from "../assets/estrela.png";
-import memory4 from "../assets/estrela.png";
+import estrela from "../assets/estrela.png";
 
 import shop from "../assets/shop.jpg";
 import shop2 from "../assets/shop2.jpg";
@@ -20,8 +17,14 @@ import pizza2 from "../assets/pizza2.jpg";
 import pis from "../assets/pis.jpg";
 import pis2 from "../assets/pis2.jpg";
 import pis3 from "../assets/pis3.jpg";
-import praia from "../assets/praia.jpg";
-import romaria from "../assets/romaria.jpg";
+import ano from "../assets/ano.jpg";
+import ano2 from "../assets/ano2.jpg";
+import ano3 from "../assets/ano3.jpg";
+import ano5 from "../assets/ano5.jpg";
+import casa from "../assets/casa.jpg";
+import casa2 from "../assets/casa2.jpg";
+import casa3 from "../assets/casa3.jpg";
+import casa4 from "../assets/casa4.mp4";
 
 type Memory = {
   id: number;
@@ -49,7 +52,7 @@ const memories: Memory[] = [
     title: "Nosso Primeiro Encontro",
     date: "Seg, 13 de Novembro de 2023",
     text: "Foi nesse dia que eu percebi que existia algo diferente em você.",
-    image: memory1,
+    image: estrela,
     gallery: [shop, shop2],
     audio: null,
     video: null,
@@ -60,8 +63,8 @@ const memories: Memory[] = [
     title: "Primeiro Passeio",
     date: "Dom, 7 de Janeiro 2024",
     text: "Está eternizado na minha memória.",
-    image: foto1,
-    gallery: [],
+    image: estrela,
+    gallery: [foto1],
     audio: null,
     video: null,
     position: { x: 65, y: 25 },
@@ -71,7 +74,7 @@ const memories: Memory[] = [
     title: "Nossa Primeira Viagem",
     date: "Dom, 4 de Fevereiro de 2024",
     text: "Descobrimos que juntos qualquer lugar se torna especial.",
-    image: memory3,
+    image: estrela,
     gallery: [ca, ca2],
     audio: null,
     video: video1,
@@ -82,7 +85,7 @@ const memories: Memory[] = [
     title: "Nosso Lugar Favorito",
     date: "Sáb 18 de Janeiro de 2025",
     text: "Aquele lugar sempre vai carregar um pedaço da gente. Nossas risadas ainda ecoam por lá.",
-    image: memory4,
+    image: estrela,
     gallery: [pizza, pizza2],
     audio: null,
     video: null,
@@ -92,8 +95,8 @@ const memories: Memory[] = [
     id: 5,
     title: "Colação",
     date: "27 de Agosto 2024",
-    text: "So consigo lembrar o quanto voce tava linda",
-    image: memory1,
+    text: "Só consigo lembrar o quanto você estava linda, e o quanto eu tenho orgulho de você.",
+    image: estrela,
     gallery: [colacao, colacao2],
     audio: null,
     video: null,
@@ -103,8 +106,8 @@ const memories: Memory[] = [
     id: 6,
     title: "Dia de Piscina",
     date: "Dom 4 de Janeiro de 2026",
-    text: "Ao seu lado qualquer lugar vira especial",
-    image: memory2,
+    text: "Ao seu lado qualquer lugar vira especial.",
+    image: estrela,
     gallery: [pis, pis2, pis3],
     audio: null,
     video: null,
@@ -112,38 +115,36 @@ const memories: Memory[] = [
   },
   {
     id: 7,
-    title: "",
-    date: "",
-    text: "",
-    image: memory3,
-    gallery: [romaria],
+    title: "Nosso primeiro ano de namoro",
+    date: "Comemorado Dom 22 de Dezembro de 2024",
+    text: "Lembra da surpresa que te fiz nesse dia?",
+    image: estrela,
+    gallery: [ano, ano2, ano3, ano5],
     audio: null,
     video: null,
     position: { x: 85, y: 75 },
   },
   {
     id: 8,
-    title: "",
-    date: "",
-    text: "",
-    image: memory4,
-    gallery: [praia],
+    title: "Nosso lar",
+    date: "6 abril 2024 / 25 agosto 2024",
+    text: "Foi na sua casa e na minha, que tive as melhores risadas, carinho e amor. O simples, que sempre funcionou.",
+    image: estrela,
+    gallery: [casa, casa2, casa3],
     audio: null,
-    video: null,
+    video: casa4,
     position: { x: 30, y: 80 },
   },
 ];
 
-const starImages = [memory1, memory2, memory3, memory4];
-
 function Particles() {
   const particles = useMemo(() => {
-    return Array.from({ length: 10 }, (_, i) => ({
+    return Array.from({ length: 6 }, (_, i) => ({
       id: i,
-      left: 8 + ((i * 9.3) % 84),
-      top: 8 + ((i * 11.1) % 84),
-      size: 1.5 + (i % 3),
-      opacity: 0.16 + (i % 4) * 0.04,
+      left: 10 + ((i * 13.7) % 80),
+      top: 8 + ((i * 17.1) % 84),
+      size: 1.5 + (i % 2),
+      opacity: 0.14 + (i % 3) * 0.04,
     }));
   }, []);
 
@@ -158,7 +159,8 @@ function Particles() {
             top: `${p.top}%`,
             width: p.size,
             height: p.size,
-            background: `oklch(0.85 0.06 15 / ${p.opacity})`,
+            background: `oklch(0.9 0.05 20 / ${p.opacity})`,
+            boxShadow: "0 0 10px rgba(255,190,205,0.28)",
           }}
         />
       ))}
@@ -174,18 +176,26 @@ type StarProps = {
 };
 
 function Star({ memory, index, onClick, isVisible }: StarProps) {
-  const starImageUrl = starImages[index % starImages.length];
-
   return (
     <motion.button
-      initial={{ opacity: 0, scale: 0.6 }}
-      animate={isVisible ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.6 }}
+      initial={{ opacity: 0, scale: 0.65 }}
+      animate={
+        isVisible
+          ? {
+              opacity: 1,
+              scale: 1,
+            }
+          : {
+              opacity: 0,
+              scale: 0.65,
+            }
+      }
       transition={{
         duration: 0.45,
         delay: index * 0.06,
         ease: "easeOut",
       }}
-      whileTap={{ scale: 0.94 }}
+      whileTap={{ scale: 0.92 }}
       onClick={() => onClick(memory)}
       className="absolute z-10 cursor-pointer"
       style={{
@@ -195,20 +205,43 @@ function Star({ memory, index, onClick, isVisible }: StarProps) {
       }}
       aria-label={`Memória: ${memory.title}`}
     >
-      <div className="relative">
-        <div className="relative h-10 w-10 overflow-hidden rounded-full border border-rose-glow/40 shadow-[0_0_14px_rgba(251,113,133,0.28)] md:h-12 md:w-12">
-          <img
-            src={starImageUrl}
-            alt={`Estrela ${index + 1}`}
-            className="h-full w-full object-cover"
-            loading="lazy"
-            decoding="async"
-          />
+      <div className="relative flex h-12 w-12 items-center justify-center md:h-14 md:w-14">
+        <motion.div
+          className="absolute inset-0 rounded-full bg-rose-glow/20 blur-lg"
+          animate={{
+            opacity: [0.35, 0.75, 0.35],
+            scale: [0.9, 1.18, 0.9],
+          }}
+          transition={{
+            duration: 3.2,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: index * 0.15,
+          }}
+        />
 
-          <div className="absolute inset-0 bg-gradient-to-br from-rose-glow/20 to-transparent" />
-        </div>
+        <div className="absolute inset-1 rounded-full bg-white/10 blur-md" />
 
-        <div className="absolute -inset-1 rounded-full bg-rose-glow/10 blur-md" />
+        <motion.img
+          src={estrela}
+          alt={`Estrela ${index + 1}`}
+          loading="lazy"
+          decoding="async"
+          className="relative z-10 h-9 w-9 object-contain drop-shadow-[0_0_12px_rgba(255,190,205,0.75)] md:h-11 md:w-11"
+          animate={{
+            opacity: [0.82, 1, 0.82],
+            scale: [1, 1.06, 1],
+          }}
+          transition={{
+            duration: 2.8,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: index * 0.12,
+          }}
+        />
+
+        <div className="absolute left-1/2 top-1/2 h-px w-14 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-transparent via-rose-glow/35 to-transparent" />
+        <div className="absolute left-1/2 top-1/2 h-14 w-px -translate-x-1/2 -translate-y-1/2 bg-gradient-to-b from-transparent via-rose-glow/35 to-transparent" />
       </div>
     </motion.button>
   );
@@ -237,14 +270,14 @@ function ConstellationLines({ memories, isVisible }: ConstellationLinesProps) {
           y1={`${pair.from.y}%`}
           x2={`${pair.to.x}%`}
           y2={`${pair.to.y}%`}
-          stroke="oklch(0.65 0.2 18 / 0.38)"
-          strokeWidth="1.2"
+          stroke="oklch(0.72 0.18 18 / 0.42)"
+          strokeWidth="1.15"
           strokeLinecap="round"
           initial={{ opacity: 0 }}
-          animate={isVisible ? { opacity: 0.5 } : { opacity: 0 }}
+          animate={isVisible ? { opacity: 0.52 } : { opacity: 0 }}
           transition={{
-            duration: 0.5,
-            delay: 0.3 + index * 0.05,
+            duration: 0.45,
+            delay: 0.25 + index * 0.05,
           }}
         />
       ))}
@@ -323,13 +356,13 @@ function MemoryModal({ memory, onClose }: MemoryModalProps) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-background/90 p-3"
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-background/92 p-3"
       onClick={onClose}
     >
       <motion.div
-        initial={{ opacity: 0, scale: 0.96, y: 20 }}
+        initial={{ opacity: 0, scale: 0.96, y: 18 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.96, y: 20 }}
+        exit={{ opacity: 0, scale: 0.96, y: 18 }}
         transition={{ duration: 0.25, ease: "easeOut" }}
         onClick={(e) => e.stopPropagation()}
         className="glass relative my-auto w-full max-w-lg overflow-hidden rounded-3xl shadow-soft"
@@ -338,10 +371,10 @@ function MemoryModal({ memory, onClose }: MemoryModalProps) {
       >
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 z-20 rounded-full border border-white/10 bg-background/80 p-2.5 text-muted-foreground transition-colors hover:text-foreground"
+          className="absolute right-4 top-4 z-30 rounded-full border border-white/10 bg-background/85 p-3 text-white shadow-soft transition active:scale-95"
           aria-label="Fechar"
         >
-          <X size={20} />
+          <X size={22} />
         </button>
 
         <div className="relative aspect-[4/5] w-full overflow-hidden bg-gradient-to-b from-wine/20 to-transparent">
@@ -380,20 +413,20 @@ function MemoryModal({ memory, onClose }: MemoryModalProps) {
               {currentMediaIndex > 0 && (
                 <button
                   onClick={goToPrevious}
-                  className="absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-background/70 p-3 text-white transition-colors hover:bg-background/90"
+                  className="absolute left-3 top-1/2 z-30 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/60 text-white shadow-[0_0_24px_rgba(0,0,0,0.45)] backdrop-blur-sm transition active:scale-95 md:h-16 md:w-16"
                   aria-label="Anterior"
                 >
-                  <ChevronLeft size={22} />
+                  <ChevronLeft size={34} strokeWidth={2.4} />
                 </button>
               )}
 
               {currentMediaIndex < mediaItems.length - 1 && (
                 <button
                   onClick={goToNext}
-                  className="absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-background/70 p-3 text-white transition-colors hover:bg-background/90"
+                  className="absolute right-3 top-1/2 z-30 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/60 text-white shadow-[0_0_24px_rgba(0,0,0,0.45)] backdrop-blur-sm transition active:scale-95 md:h-16 md:w-16"
                   aria-label="Próximo"
                 >
-                  <ChevronRight size={22} />
+                  <ChevronRight size={34} strokeWidth={2.4} />
                 </button>
               )}
 
@@ -403,7 +436,7 @@ function MemoryModal({ memory, onClose }: MemoryModalProps) {
                     key={`${item.type}-${idx}`}
                     onClick={() => setCurrentMediaIndex(idx)}
                     className={`h-2 rounded-full transition-all ${
-                      idx === currentMediaIndex ? "w-6 bg-rose-glow" : "w-2 bg-white/40"
+                      idx === currentMediaIndex ? "w-7 bg-rose-glow" : "w-2.5 bg-white/45"
                     }`}
                     aria-label={`Ir para ${item.type === "video" ? "vídeo" : "imagem"} ${idx + 1}`}
                   />
@@ -417,7 +450,7 @@ function MemoryModal({ memory, onClose }: MemoryModalProps) {
           <div>
             <h3 className="mb-1 font-display text-2xl text-blush md:text-3xl">{memory.title}</h3>
 
-            <p className="text-sm font-light tracking-wider text-rose-glow/60">{memory.date}</p>
+            <p className="text-sm font-light tracking-wider text-rose-glow/70">{memory.date}</p>
           </div>
 
           <p className="text-base font-light leading-relaxed text-muted-foreground">
@@ -425,7 +458,7 @@ function MemoryModal({ memory, onClose }: MemoryModalProps) {
           </p>
 
           {mediaItems.length > 1 && (
-            <p className="pt-2 text-center text-xs text-muted-foreground/40">
+            <p className="pt-2 text-center text-xs text-muted-foreground/50">
               ← deslize ou use as setas para ver mais →
             </p>
           )}

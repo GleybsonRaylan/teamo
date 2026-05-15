@@ -29,7 +29,7 @@ export function Gallery() {
       </div>
 
       <div className="overflow-x-auto no-scrollbar">
-        <div className="flex min-w-max gap-4 px-6 pb-6 sm:gap-5">
+        <div className="flex min-w-max gap-4 px-6 pb-8 sm:gap-5">
           {photos.map((p, i) => (
             <motion.button
               key={i}
@@ -46,10 +46,12 @@ export function Gallery() {
               whileTap={{
                 scale: 0.97,
               }}
-              className="relative w-52 shrink-0 rounded-md bg-blush/95 p-3 pb-11 shadow-soft sm:w-60 sm:pb-12"
-              style={{ transform: `rotate(${i % 2 ? 2 : -2}deg)` }}
+              className="relative w-52 shrink-0 rounded-md bg-[#fff1f4] p-3 pb-14 shadow-soft sm:w-60 sm:pb-16"
+              style={{
+                transform: `rotate(${i % 2 ? 2 : -2}deg)`,
+              }}
             >
-              <div className="aspect-[3/4] overflow-hidden bg-background">
+              <div className="aspect-[3/4] overflow-hidden bg-background shadow-inner">
                 <img
                   src={p.src}
                   alt={p.caption}
@@ -59,9 +61,13 @@ export function Gallery() {
                 />
               </div>
 
-              <p className="absolute bottom-3 left-0 right-0 text-center font-display text-xl italic text-background">
-                {p.caption}
-              </p>
+              <div className="absolute bottom-3 left-3 right-3 rounded-full bg-background/90 px-3 py-1.5 shadow-[0_4px_16px_rgba(0,0,0,0.18)]">
+                <p className="text-center font-display text-xl italic tracking-wide text-[#fff1f4] drop-shadow-[0_1px_6px_rgba(0,0,0,0.45)]">
+                  {p.caption}
+                </p>
+              </div>
+
+              <div className="pointer-events-none absolute inset-0 rounded-md ring-1 ring-black/5" />
             </motion.button>
           ))}
         </div>
@@ -81,7 +87,10 @@ export function Gallery() {
               initial={{ scale: 0.94, opacity: 0, y: 16 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.96, opacity: 0 }}
-              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              transition={{
+                duration: 0.45,
+                ease: [0.22, 1, 0.36, 1],
+              }}
               src={photos[active].src}
               alt={photos[active].caption}
               loading="eager"

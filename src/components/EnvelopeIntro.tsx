@@ -9,7 +9,7 @@ interface Props {
   onComplete: () => void;
 }
 
-const greeting = "Happy Valentine's Day";
+const greeting = "Feliz 2 Anos e 5 Meses meu amor";
 
 export function EnvelopeIntro({ recipient, onComplete }: Props) {
   const [mounted, setMounted] = useState(false);
